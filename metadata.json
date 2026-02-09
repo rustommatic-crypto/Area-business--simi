@@ -1,0 +1,8 @@
+{
+  "name": "Simi: Neural Sisi",
+  "description": "An AI-powered business companion for Nigeria, featuring Simi - the street-smart Lagos-Neural avatar with emerald braids and Adire-patterned tech-wear. Now with a Global Business Directory and WhatsApp Automation.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ]
+}
