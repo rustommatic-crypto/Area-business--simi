@@ -4,7 +4,7 @@ import { AppMode, InventoryItem, CartItem, Invoice, VendorPromotion, WardrobeIte
 import SimiAvatar, { VisualState } from './components/SimiAvatar';
 import LiveInterface from './components/LiveInterface';
 import SimiTV from './components/SimiTV';
-import HustleHub from './components/HustleHub';
+import SimiBusinessDashboard from './components/SimiBusinessDashboard';
 import AreaShopper from './components/AreaShopper';
 import SimiDirectory from './components/SimiDirectory';
 import AdminPanel from './components/AdminPanel';
@@ -31,7 +31,8 @@ const App: React.FC = () => {
     if (cmd === 'visual_state') setVisualState(args.state);
     if (cmd === 'navigate') {
       const targetMode = args.mode?.toUpperCase();
-      if (Object.values(AppMode).includes(targetMode)) setMode(targetMode as AppMode);
+      if (targetMode === 'HUSTLE' || targetMode === 'BUSINESS') setMode(AppMode.BUSINESS);
+      else if (Object.values(AppMode).includes(targetMode)) setMode(targetMode as AppMode);
     }
     
     if (cmd === 'add_to_cart') {
@@ -66,7 +67,7 @@ const App: React.FC = () => {
         stock: args.stock || 10
       };
       setInventory(prev => [...prev, newItem]);
-      setMode(AppMode.HUSTLE);
+      setMode(AppMode.BUSINESS);
       setVisualState('strategy');
     }
   };
@@ -85,18 +86,18 @@ const App: React.FC = () => {
           </div>
           <div className="hidden sm:block">
             <h1 className="text-xl font-black gold-gradient-text tracking-tighter leading-none uppercase">Simi International</h1>
-            <p className="text-[9px] text-emerald-500 font-bold uppercase tracking-[0.2em] mt-1">Neural Media & Global Trade</p>
+            <p className="text-[9px] text-emerald-500 font-bold uppercase tracking-[0.2em] mt-1">Neural Business Suite</p>
           </div>
         </div>
         
         <nav className="flex bg-slate-900/50 rounded-2xl p-1 border border-slate-800 backdrop-blur-sm overflow-x-auto no-scrollbar max-w-[75%]">
-          {[AppMode.CHAT, AppMode.TV, AppMode.HUSTLE, AppMode.SHOPPER, AppMode.DIRECTORY, AppMode.ADMIN].map((m) => (
+          {[AppMode.CHAT, AppMode.TV, AppMode.BUSINESS, AppMode.SHOPPER, AppMode.DIRECTORY, AppMode.ADMIN].map((m) => (
             <button 
               key={m} 
               onClick={() => setMode(m)} 
               className={`px-5 py-2.5 rounded-xl text-[10px] font-black tracking-widest transition-all whitespace-nowrap uppercase ${mode === m ? 'bg-emerald-600 text-white shadow-lg scale-105' : 'text-slate-500 hover:text-slate-200'}`}
             >
-              {m === 'HUSTLE' ? 'Vendor Hub' : m === 'SHOPPER' ? 'Area Shopper' : m === 'DIRECTORY' ? 'Global Directory' : m === 'ADMIN' ? 'Office' : m}
+              {m === 'BUSINESS' ? 'Get on Simi' : m === 'SHOPPER' ? 'Area Shopper' : m === 'DIRECTORY' ? 'Global Directory' : m === 'ADMIN' ? 'Office' : m}
             </button>
           ))}
         </nav>
@@ -117,23 +118,32 @@ const App: React.FC = () => {
           {mode === AppMode.CHAT && (
             <div className="max-w-3xl mx-auto text-center space-y-8 animate-in fade-in slide-in-from-bottom-8">
               <h2 className="text-5xl md:text-6xl font-black text-white uppercase italic tracking-tighter leading-none">
-                "Oya, Watch <br/><span className="gold-gradient-text">Simi TV!</span>"
+                "Oya, Get on <br/><span className="gold-gradient-text">Simi Business!</span>"
               </h2>
               <p className="text-slate-400 text-lg font-medium leading-relaxed italic">
-                Our TV Screen is always live. Switch channels to see my shows or tune into AreaFM 98.1 for the latest vibes!
+                Don't just upload products—join the grid. I handle your WhatsApp, Social Media, and Office Admin while you sleep. Ready to scale?
               </p>
               <div className="flex justify-center space-x-4">
                 <button 
-                  onClick={() => setVisualState(visualState === 'areafm' ? 'broadcast' : 'areafm')} 
-                  className={`px-8 py-4 rounded-full border transition-all text-xs font-black uppercase tracking-widest ${visualState === 'areafm' ? 'bg-amber-600 border-amber-400 text-white shadow-neural' : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-white'}`}
+                  onClick={() => setMode(AppMode.BUSINESS)} 
+                  className="px-10 py-5 bg-emerald-600 hover:bg-emerald-500 rounded-3xl text-white font-black uppercase text-xs shadow-neural transition-all"
                 >
-                  <i className="fa-solid fa-radio mr-3"></i> {visualState === 'areafm' ? 'Back to Broadcast' : 'Tune to AreaFM'}
+                  Enter Business Hub
                 </button>
               </div>
             </div>
           )}
           {mode === AppMode.TV && <SimiTV />}
-          {mode === AppMode.HUSTLE && <HustleHub inventory={inventory} setInventory={setInventory} />}
+          {mode === AppMode.BUSINESS && (
+            <SimiBusinessDashboard 
+              inventory={inventory} 
+              onCallSimi={() => {
+                // Logic to trigger the mic/live interface with business context
+                const micBtn = document.querySelector('button .fa-microphone')?.parentElement;
+                if (micBtn) (micBtn as HTMLButtonElement).click();
+              }}
+            />
+          )}
           {mode === AppMode.SHOPPER && <AreaShopper cart={cart} setCart={setCart} invoice={activeInvoice} />}
           {mode === AppMode.DIRECTORY && <SimiDirectory />}
           {mode === AppMode.ADMIN && (
@@ -155,7 +165,7 @@ const App: React.FC = () => {
         />
         <div className={`mt-4 px-6 py-2 rounded-full backdrop-blur-md border border-white/5 transition-all duration-500 ${isListening || isSpeaking ? 'opacity-100 bg-emerald-600/20' : 'opacity-40'}`}>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 whitespace-nowrap">
-            {isListening ? 'Simi is Listening...' : isSpeaking ? 'Simi is Gisting...' : 'Tap Simi to Call'}
+            {isListening ? 'Simi is Listening...' : isSpeaking ? 'Simi is Advising...' : 'Call Simi'}
           </p>
         </div>
       </div>
@@ -168,11 +178,11 @@ const App: React.FC = () => {
          <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2">
                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-               <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Sister Sync: AreaGPT</span>
+               <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Sister Sync: Active</span>
             </div>
             <div className="flex items-center space-x-2">
                <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-               <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Logistics: Arealine</span>
+               <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Logistics: Arealine Bridge</span>
             </div>
          </div>
          <p className="text-[8px] font-black text-slate-700 uppercase tracking-widest">© 2025 Neural Sisi Media Group</p>

@@ -9,24 +9,25 @@ export interface Message {
 export enum AppMode {
   CHAT = 'CHAT',
   TV = 'TV',
-  HUSTLE = 'HUSTLE', // Vendor Hub
+  BUSINESS = 'BUSINESS', // Simi Business Suite
   SHOPPER = 'SHOPPER', // Area Shopper
-  DIRECTORY = 'DIRECTORY', // Global Business Directory (formerly Supply)
+  DIRECTORY = 'DIRECTORY', // Global Business Directory
   ADMIN = 'ADMIN'
 }
 
-export type VideoErrorType = 'BILLING' | 'SERVER' | 'AUTH' | 'QUOTA' | 'UNKNOWN' | null;
+export interface BusinessIntel {
+  opportunity: string;
+  location: string;
+  action: string;
+  confidence: number;
+}
 
-export interface VideoTask {
+export interface SocialTask {
   id: string;
-  source: AppMode;
-  script: string;
-  baseImage?: string;
-  status: 'queued' | 'processing' | 'completed' | 'failed';
-  url?: string;
-  error?: string;
-  progressMessage?: string;
-  targetId?: string;
+  platform: 'TIKTOK' | 'INSTAGRAM' | 'WHATSAPP' | 'X';
+  content: string;
+  status: 'ready' | 'posted';
+  scheduledTime: string;
 }
 
 export interface InventoryItem {
@@ -35,16 +36,6 @@ export interface InventoryItem {
   price: number;
   stock: number;
   imageUrl?: string;
-}
-
-export interface TVShow {
-  id: string;
-  title: string;
-  type: 'HUSTLE_TOUR' | 'MARKET_TRENDS' | 'MARKET_DEMAND' | 'GOSSIP' | 'GAME_SHOW';
-  thumbnailUrl: string;
-  videoUrl?: string;
-  description: string;
-  views: number;
 }
 
 export interface BusinessNode {
@@ -78,15 +69,14 @@ export interface VendorPromotion {
   businessName: string;
   location: string;
   category: string;
-  socials?: { instagram?: string; tiktok?: string; whatsapp?: string };
-  inventory?: InventoryItem[];
-  shopImageUrl: string | null;
-  vendorVideoUrl?: string | null;
-  promoVideoUrl: string | null;
   status: 'active' | 'pending' | 'rejected';
-  timestamp?: Date;
-  onboardingStatus?: 'completed' | 'pending';
   views: number;
+  shopImageUrl: string | null;
+  // Added properties for marketing and tracking
+  vendorVideoUrl: string | null;
+  promoVideoUrl: string | null;
+  timestamp: Date;
+  onboardingStatus: 'completed' | 'pending' | 'failed';
 }
 
 export interface WardrobeItem {
@@ -102,34 +92,31 @@ export interface WhatsAppStatus {
   emoji: string;
 }
 
-/** 
- * Added missing types used in LongFormStudio, SimiWorld, AdminPanel, SocialHub, and SupplyChain 
- */
-
+// Missing types for LongFormStudio, SimiWorld, SocialHub, TV and SupplyChain components
 export type EpisodeTheme = 'MARKET' | 'TECH' | 'MOTIVATION' | 'STREET';
 
 export interface VideoSegment {
   id: string;
-  status: 'queued' | 'generating' | 'completed' | 'failed';
-  videoUrl?: string;
   script: string;
+  videoUrl?: string;
+  status: 'queued' | 'generating' | 'completed';
 }
 
 export interface LongFormState {
-  title: string;
-  segments: VideoSegment[];
   isProcessing: boolean;
   isStoryboarding: boolean;
-  theme?: EpisodeTheme;
+  segments: VideoSegment[];
+  theme: EpisodeTheme | null;
+  title: string;
 }
 
 export interface FeaturedEpisode {
   id: string;
   title: string;
-  thumbnailUrl: string;
   theme: string;
   duration: string;
   views: number;
+  thumbnailUrl: string;
 }
 
 export interface AdminStats {
@@ -145,6 +132,15 @@ export interface SocialProfile {
   followers: number;
   engagementRate: string;
   isConnected: boolean;
+}
+
+export interface TVShow {
+  id: string;
+  title: string;
+  type: string;
+  description: string;
+  thumbnailUrl: string;
+  views: number;
 }
 
 export interface SupplyNode {
